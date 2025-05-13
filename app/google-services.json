@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "367583569895",
+    "project_id": "huellitasurbanas-c6820",
+    "storage_bucket": "huellitasurbanas-c6820.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:367583569895:android:c7d7a53cf924cf82c33f42",
+        "android_client_info": {
+          "package_name": "com.example.huellitasurbanas"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "367583569895-pdj62cf3ngr3jo7li8o9fv76ocsjpf2o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvVhHwqogtHChjxl9tpyvrHJt4aFyONOg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "367583569895-pdj62cf3ngr3jo7li8o9fv76ocsjpf2o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
