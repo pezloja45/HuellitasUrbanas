@@ -44,7 +44,7 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
     <EditText
-        android:id="@+id/str_email"
+        android:id="@+id/str_ciudad"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -65,7 +65,7 @@
         app:layout_constraintTop_toBottomOf="@+id/inputUsername" />
 
     <EditText
-        android:id="@+id/str_email2"
+        android:id="@+id/str_email"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -84,7 +84,7 @@
         app:layout_constraintEnd_toEndOf="@+id/inputUsername"
         app:layout_constraintHorizontal_bias="0.666"
         app:layout_constraintStart_toStartOf="@+id/inputUsername"
-        app:layout_constraintTop_toBottomOf="@+id/str_email" />
+        app:layout_constraintTop_toBottomOf="@+id/str_ciudad" />
 
     <EditText
         android:id="@+id/str_pass"
@@ -103,9 +103,9 @@
         android:textColor="@color/colorWhite"
         android:textColorHint="@color/colorWhite"
         app:drawableLeftCompat="@drawable/ic_security"
-        app:layout_constraintEnd_toEndOf="@+id/str_email"
-        app:layout_constraintStart_toStartOf="@+id/str_email"
-        app:layout_constraintTop_toBottomOf="@+id/str_email2" />
+        app:layout_constraintEnd_toEndOf="@+id/str_ciudad"
+        app:layout_constraintStart_toStartOf="@+id/str_ciudad"
+        app:layout_constraintTop_toBottomOf="@+id/str_email" />
 
     <EditText
         android:id="@+id/str_confirmPass"

@@ -38,13 +38,13 @@
         android:textColor="@color/colorWhite"
         android:textColorHint="@color/colorWhite"
         app:drawableLeftCompat="@drawable/ic_security"
-        app:layout_constraintEnd_toEndOf="@+id/str_email"
+        app:layout_constraintEnd_toEndOf="@+id/str_ciudad"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/str_email"
-        app:layout_constraintTop_toBottomOf="@+id/str_email" />
+        app:layout_constraintStart_toStartOf="@+id/str_ciudad"
+        app:layout_constraintTop_toBottomOf="@+id/str_ciudad" />
 
     <EditText
-        android:id="@+id/str_email"
+        android:id="@+id/str_ciudad"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"

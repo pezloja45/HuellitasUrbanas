@@ -1,30 +1,28 @@
 package com.example.huellitasurbanas;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Objects;
 
 public class registerActivity extends AppCompatActivity {
 
     TextView str_tieneCuenta;
     Button btn_registrar;
-    EditText str_username, str_email, str_pass, str_confirmPass;
+    EditText str_username, str_email, str_pass, str_confirmPass, str_ciudad;
 
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +32,7 @@ public class registerActivity extends AppCompatActivity {
 
         str_username = findViewById(R.id.inputUsername);
         str_email = findViewById(R.id.str_email);
+        str_ciudad = findViewById(R.id.str_ciudad);
         str_pass = findViewById(R.id.str_pass);
         str_confirmPass = findViewById(R.id.str_confirmPass);
 
@@ -47,6 +46,7 @@ public class registerActivity extends AppCompatActivity {
         btn_registrar.setOnClickListener(v -> {
             String email = str_email.getText().toString().trim();
             String pass = str_pass.getText().toString().trim();
+            String city = str_ciudad.getText().toString().trim();
             String confirmPass = str_confirmPass.getText().toString().trim();
             String username = str_username.getText().toString().trim();
 
@@ -58,8 +58,13 @@ public class registerActivity extends AppCompatActivity {
                 Toast.makeText(registerActivity.this, "La contraseña debe tener al menos 5 caracteres, una mayúscula, un número y un carácter especial", Toast.LENGTH_LONG).show();
             } else {
                 registerUser(email, pass);
+                storeUser(email, username, city);
             }
         });
+    }
+
+    private void storeUser(String email, String username, String ciudad) {
+        db.collection("usuarios").document(Objects.requireNonNull(mAuth.getUid())).set(new Usuarios(username,  email,  R.drawable.baseline_person_24, ciudad,  0));
     }
 
     private void registerUser(String email, String pass) {

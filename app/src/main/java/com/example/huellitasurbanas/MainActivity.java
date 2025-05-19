@@ -8,9 +8,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,8 +20,7 @@ public class MainActivity extends AppCompatActivity {
     EditText str_email, str_pass;
     Button btn_login;
 
-    //Debo registrarlo en shared prefs para que guarde siempre si fue primera vez o no
-    boolean ifFirstTime;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     private FirebaseAuth mAuth;
 
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        str_email = findViewById(R.id.str_email);
+        str_email = findViewById(R.id.str_ciudad);
         str_pass = findViewById(R.id.str_pass);
         btn_login = findViewById(R.id.btn_login);
         str_crearCuenta = findViewById(R.id.str_crearCuenta);
@@ -52,15 +53,57 @@ public class MainActivity extends AppCompatActivity {
     private void loginUser(String email, String pass) {
         mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                startActivity(new Intent(MainActivity.this,PantallaPrincipal.class));
+
+                db.collection("usuarios").document(email).get()
+                        .addOnSuccessListener(documentSnapshot -> {
+                            if (documentSnapshot.exists()) {
+                                String rol = documentSnapshot.getString("rol");
+
+                                if (rol == null || rol.isEmpty()) {
+                                    // Mostrar diálogo, y solo avanzar después de la selección
+                                    new AlertDialog.Builder(MainActivity.this)
+                                            .setTitle("Escoge tu rol")
+                                            .setMessage("¿Eres paseador o dueño de mascota?")
+                                            .setPositiveButton("Paseador", (dialog, which) -> {
+                                                db.collection("usuarios").document(email)
+                                                        .update("rol", "paseador")
+                                                        .addOnSuccessListener(unused -> {
+                                                            startActivity(new Intent(MainActivity.this, MainScreenPaseador.class));
+                                                            finish();
+                                                        });
+                                            })
+                                            .setNegativeButton("Dueño", (dialog, which) -> {
+                                                db.collection("usuarios").document(email)
+                                                        .update("rol", "dueño")
+                                                        .addOnSuccessListener(unused -> {
+                                                            startActivity(new Intent(MainActivity.this, PantallaPrincipal.class));
+                                                            finish();
+                                                        });
+                                            })
+                                            .setCancelable(false) // evita que el usuario cierre el diálogo sin elegir
+                                            .create()
+                                            .show();
+
+                                } else {
+                                    // Si ya tiene rol, entrar directamente
+                                    startActivity(new Intent(MainActivity.this, PantallaPrincipal.class));
+                                    finish();
+                                }
+
+                            } else {
+                                Toast.makeText(MainActivity.this, "Usuario no encontrado en Firestore", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(MainActivity.this, "Error al leer datos del usuario", Toast.LENGTH_SHORT).show();
+                        });
+
             } else {
-                Toast.makeText(MainActivity.this, "Error al iniciar sesion", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Error al iniciar sesión", Toast.LENGTH_SHORT).show();
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(MainActivity.this, "Error al iniciar sesion", Toast.LENGTH_SHORT).show();
-            }
+        }).addOnFailureListener(e -> {
+            Toast.makeText(MainActivity.this, "Error al iniciar sesión", Toast.LENGTH_SHORT).show();
         });
     }
+
 }
