@@ -1,23 +1,23 @@
-package com.example.huellitasurbanas;
+package com.example.huellitasurbanas.vista;
 
 import android.os.Bundle;
-import android.view.MenuItem;
+import android.widget.FrameLayout;
 
-import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.huellitasurbanas.vista.fragment.Buscar;
+import com.example.huellitasurbanas.vista.fragment.Chat;
+import com.example.huellitasurbanas.vista.fragment.Mascotas;
+import com.example.huellitasurbanas.vista.fragment.Perfil;
+import com.example.huellitasurbanas.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 
 public class MainScreenDueno extends AppCompatActivity {
 
     BottomNavigationView bnv_dueno;
+    FrameLayout frameContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +25,7 @@ public class MainScreenDueno extends AppCompatActivity {
         setContentView(R.layout.activity_main_screen_dueno);
 
         bnv_dueno = findViewById(R.id.bnv_dueno);
+        frameContainer = findViewById(R.id.frameContainer);
 
         bnv_dueno.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.bnt_chatDueno) {
@@ -45,7 +46,7 @@ public class MainScreenDueno extends AppCompatActivity {
 
     private void loadFrag(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.main, fragment);
+        transaction.replace(R.id.frameContainer, fragment);
         transaction.commit();
     }
 }

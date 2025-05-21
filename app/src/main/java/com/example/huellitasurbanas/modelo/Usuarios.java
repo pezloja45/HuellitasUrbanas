@@ -1,7 +1,8 @@
-package com.example.huellitasurbanas;
+package com.example.huellitasurbanas.modelo;
 
 public class Usuarios {
     private String nombre;
+    private String uid;
     private String correoElectronico;
     private String rol;
     private int fotoPerfil;
@@ -20,14 +21,22 @@ public class Usuarios {
         this.valoracionMedia = valoracionMedia;
     }
 
-    public Usuarios(String nombre, String correoElectronico, int fotoPerfil, String ciudad, double valoracionMedia) {
+    public Usuarios(String nombre, String correoElectronico, int fotoPerfil, String ciudad, double valoracionMedia, String uid) {
         this.nombre = nombre;
         this.correoElectronico = correoElectronico;
         this.fotoPerfil = fotoPerfil;
         this.ciudad = ciudad;
         this.valoracionMedia = valoracionMedia;
+        this.uid = uid;
     }
 
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
 
     public String getNombre() {
         return nombre;
