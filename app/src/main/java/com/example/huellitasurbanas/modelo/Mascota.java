@@ -8,12 +8,12 @@ public class Mascota {
     private int edad;
     private String tamaño;
     private String observaciones;
-    private int foto;
+    private String fotoUrl;
 
     public Mascota() {
     }
 
-    public Mascota(String uid, String uidDueno, String nombre, String raza, int edad, String tamaño, String observaciones, int foto) {
+    public Mascota(String uid, String uidDueno, String nombre, String raza, int edad, String tamaño, String observaciones, String fotoUrl) {
         this.uid = uid;
         this.uidDueno = uidDueno;
         this.nombre = nombre;
@@ -21,7 +21,7 @@ public class Mascota {
         this.edad = edad;
         this.tamaño = tamaño;
         this.observaciones = observaciones;
-        this.foto = foto;
+        this.fotoUrl = fotoUrl;
     }
 
     public Mascota(String uid, String uidDueno, String nombre, int edad, String raza, String tamaño, String observaciones) {
@@ -90,11 +90,11 @@ public class Mascota {
         this.observaciones = observaciones;
     }
 
-    public int getFoto() {
-        return foto;
+    public String getFotoUrl() {
+        return fotoUrl;
     }
 
-    public void setFoto(int foto) {
-        this.foto = foto;
+    public void setFotoUrl(String fotoUrl) {
+        this.fotoUrl = fotoUrl;
     }
 }
