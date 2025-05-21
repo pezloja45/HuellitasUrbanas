@@ -13,28 +13,31 @@
         android:theme="@style/Theme.HuellitasUrbanas"
         tools:targetApi="31">
         <activity
-            android:name=".Perfil"
+            android:name=".controlador.CrearMascota"
             android:exported="false" />
         <activity
-            android:name=".Mascotas"
+            android:name=".vista.fragment.Perfil"
             android:exported="false" />
         <activity
-            android:name=".Buscar"
+            android:name=".vista.fragment.Mascotas"
             android:exported="false" />
         <activity
-            android:name=".Chat"
+            android:name=".vista.fragment.Buscar"
             android:exported="false" />
         <activity
-            android:name=".MainScreenDueno"
+            android:name=".vista.fragment.Chat"
             android:exported="false" />
         <activity
-            android:name=".MainScreenPaseador"
+            android:name=".vista.MainScreenDueno"
+            android:exported="false" />
+        <activity
+            android:name=".vista.MainScreenPaseador"
             android:exported="false" />
         <activity
             android:name=".PantallaPrincipal"
             android:exported="false" />
         <activity
-            android:name=".registerActivity"
+            android:name=".vista.registerActivity"
             android:exported="false" />
         <activity
             android:name=".loginActivity"
@@ -43,7 +46,7 @@
             android:name=".Login"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".vista.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:backgroundTint="@color/mainOscuro"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="4dp"
+    app:cardUseCompatPadding="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/img_mascotaCard"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/baseline_pets_150"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/str_nombreMascotaCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Nombre"
+            android:textColor="@color/colorWhite"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/img_mascotaCard"
+            app:layout_constraintTop_toTopOf="@id/img_mascotaCard" />
+
+        <TextView
+            android:id="@+id/str_razaMascotaCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Raza"
+            android:textColor="@color/colorWhite"
+            app:layout_constraintStart_toStartOf="@id/str_nombreMascotaCard"
+            app:layout_constraintTop_toBottomOf="@id/str_nombreMascotaCard" />
+
+        <TextView
+            android:id="@+id/str_edadMascotaCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Edad"
+            android:textColor="@color/colorWhite"
+            app:layout_constraintStart_toStartOf="@id/str_razaMascotaCard"
+            app:layout_constraintTop_toBottomOf="@id/str_razaMascotaCard" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -1,4 +1,4 @@
-package com.example.huellitasurbanas;
+package com.example.huellitasurbanas.vista;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +9,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.huellitasurbanas.R;
+import com.example.huellitasurbanas.modelo.Usuarios;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -32,7 +34,7 @@ public class registerActivity extends AppCompatActivity {
 
         str_username = findViewById(R.id.inputUsername);
         str_email = findViewById(R.id.str_email);
-        str_ciudad = findViewById(R.id.str_ciudad);
+        str_ciudad = findViewById(R.id.str_emailInicio);
         str_pass = findViewById(R.id.str_pass);
         str_confirmPass = findViewById(R.id.str_confirmPass);
 
@@ -50,39 +52,51 @@ public class registerActivity extends AppCompatActivity {
             String confirmPass = str_confirmPass.getText().toString().trim();
             String username = str_username.getText().toString().trim();
 
-            if (email.isEmpty() || pass.isEmpty() || confirmPass.isEmpty() || username.isEmpty()) {
-                Toast.makeText(registerActivity.this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
+            if (email.isEmpty() || pass.isEmpty() || confirmPass.isEmpty() || username.isEmpty() || city.isEmpty()) {
+                Toast.makeText(registerActivity.this, "Por favor, completa todos los campos antes de continuar.", Toast.LENGTH_SHORT).show();
             } else if (!pass.equals(confirmPass)) {
-                Toast.makeText(registerActivity.this, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
+                Toast.makeText(registerActivity.this, "Las contraseñas no coinciden. Verifica e inténtalo de nuevo.", Toast.LENGTH_SHORT).show();
             } else if (!isPasswordValid(pass)) {
-                Toast.makeText(registerActivity.this, "La contraseña debe tener al menos 5 caracteres, una mayúscula, un número y un carácter especial", Toast.LENGTH_LONG).show();
+                Toast.makeText(registerActivity.this, "La contraseña debe tener al menos 5 caracteres, una letra mayúscula, un número y un carácter especial.", Toast.LENGTH_LONG).show();
             } else {
                 registerUser(email, pass);
-                storeUser(email, username, city);
             }
         });
     }
 
     private void storeUser(String email, String username, String ciudad) {
-        db.collection("usuarios").document(Objects.requireNonNull(mAuth.getUid())).set(new Usuarios(username,  email,  R.drawable.baseline_person_24, ciudad,  0));
+        db.collection("usuarios").document(Objects.requireNonNull(mAuth.getUid())).set(new Usuarios(username,  email,  R.drawable.baseline_person_24, ciudad,  0, mAuth.getUid()));
     }
 
     private void registerUser(String email, String pass) {
         mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                startActivity(new Intent(registerActivity.this,MainActivity.class));
+                String username = str_username.getText().toString().trim();
+                String ciudad = str_ciudad.getText().toString().trim();
+
+                String uid = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
+
+                db.collection("usuarios").document(uid)
+                        .set(new Usuarios(username, email, R.drawable.baseline_person_24, ciudad, 0, mAuth.getUid()))
+                        .addOnSuccessListener(unused -> {
+                            Toast.makeText(registerActivity.this, "Registro exitoso. ¡Bienvenido!", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(registerActivity.this, MainActivity.class));
+                            finish();
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(registerActivity.this, "Error al guardar los datos del usuario en Firestore: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        });
+
             } else {
-                Toast.makeText(registerActivity.this, "Error al iniciar sesion", Toast.LENGTH_SHORT).show();
+                Toast.makeText(registerActivity.this, "No se pudo registrar el usuario: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
             }
-        }).addOnFailureListener(e -> Toast.makeText(registerActivity.this, "Error al iniciar sesion", Toast.LENGTH_SHORT).show());
+        }).addOnFailureListener(e ->
+                Toast.makeText(registerActivity.this, "Se produjo un error inesperado al registrar: " + e.getMessage(), Toast.LENGTH_LONG).show()
+        );
     }
 
     private boolean isPasswordValid(String password) {
-        // Al menos 5 caracteres, una mayúscula, un número y un carácter especial
         String passwordPattern = "^(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).{5,}$";
         return password.matches(passwordPattern);
     }
-
-
-
 }
