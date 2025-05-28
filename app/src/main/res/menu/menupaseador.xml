@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/bnt_chatPaseador" />
+    <item
+        android:id="@+id/bnt_chatPaseador"
+        android:icon="@drawable/baseline_chat_24" />
     <item
         android:id="@+id/btn_paseadorPerfil"
         android:icon="@drawable/ic_persona" />

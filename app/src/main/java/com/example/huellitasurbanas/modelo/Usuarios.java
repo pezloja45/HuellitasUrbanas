@@ -5,14 +5,14 @@ public class Usuarios {
     private String uid;
     private String correoElectronico;
     private String rol;
-    private int fotoPerfil;
+    private String fotoPerfil;
     private String ciudad;
     private double valoracionMedia;
 
     public Usuarios() {
     }
 
-    public Usuarios(String nombre, String correoElectronico, String rol, int fotoPerfil, String ciudad, double valoracionMedia) {
+    public Usuarios(String nombre, String correoElectronico, String rol, String fotoPerfil, String ciudad, double valoracionMedia) {
         this.nombre = nombre;
         this.correoElectronico = correoElectronico;
         this.rol = rol;
@@ -21,7 +21,7 @@ public class Usuarios {
         this.valoracionMedia = valoracionMedia;
     }
 
-    public Usuarios(String nombre, String correoElectronico, int fotoPerfil, String ciudad, double valoracionMedia, String uid) {
+    public Usuarios(String nombre, String correoElectronico, String fotoPerfil, String ciudad, double valoracionMedia, String uid) {
         this.nombre = nombre;
         this.correoElectronico = correoElectronico;
         this.fotoPerfil = fotoPerfil;
@@ -62,11 +62,11 @@ public class Usuarios {
         this.rol = rol;
     }
 
-    public int getFotoPerfil() {
+    public String getFotoPerfil() {
         return fotoPerfil;
     }
 
-    public void setFotoPerfil(int fotoPerfil) {
+    public void setFotoPerfil(String fotoPerfil) {
         this.fotoPerfil = fotoPerfil;
     }
 

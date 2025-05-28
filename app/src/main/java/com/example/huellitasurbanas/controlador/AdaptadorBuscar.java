@@ -1,5 +1,7 @@
 package com.example.huellitasurbanas.controlador;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,17 +11,25 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.huellitasurbanas.R;
 import com.example.huellitasurbanas.modelo.Usuarios;
+import com.example.huellitasurbanas.vista.fragment.Chat;
 
 import java.util.List;
 
 public class AdaptadorBuscar extends RecyclerView.Adapter<AdaptadorBuscar.ViewHolder> {
 
     private List<Usuarios> listaUsuarios;
+    private OnUsuarioClickListener listener;
 
-    public AdaptadorBuscar(List<Usuarios> listaUsuarios) {
+    public AdaptadorBuscar(List<Usuarios> listaUsuarios, OnUsuarioClickListener listener) {
         this.listaUsuarios = listaUsuarios;
+        this.listener = listener;
+    }
+
+    public interface OnUsuarioClickListener {
+        void onUsuarioClick(Usuarios usuario);
     }
 
     @NonNull
@@ -30,11 +40,21 @@ public class AdaptadorBuscar extends RecyclerView.Adapter<AdaptadorBuscar.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AdaptadorBuscar.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Usuarios usuario = listaUsuarios.get(position);
         holder.str_nombrePasedorCard.setText(usuario.getNombre());
         holder.str_ciudadPaseadorCard.setText(usuario.getCiudad());
-        holder.img_perfilPaseadorCard.setImageResource(usuario.getFotoPerfil());
+        Glide.with(holder.itemView.getContext())
+                .load(usuario.getFotoPerfil())
+                .placeholder(R.drawable.baseline_person_150)
+                .into(holder.img_perfilPaseadorCard);
+
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onUsuarioClick(usuario);
+            }
+        });
     }
 
     @Override
