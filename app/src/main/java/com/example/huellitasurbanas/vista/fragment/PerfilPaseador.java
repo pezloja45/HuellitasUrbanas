@@ -5,13 +5,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -26,15 +25,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 
-public class Perfil extends Fragment {
+public class PerfilPaseador extends Fragment {
 
-    private FirebaseFirestore db;
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
 
-    private EditText edt_nombre, edt_ciudad, edt_correo;
-    private Button btn_guardar;
     private ImageView img_fotoPerfil;
-
+    private EditText edt_nombre, edt_ciudad, edt_correo;
+    private View btn_guardar;
 
     private Uri selectedImageUri;
 
@@ -47,16 +45,14 @@ public class Perfil extends Fragment {
             });
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_perfil, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_perfil_paseador, container, false);
 
         img_fotoPerfil = view.findViewById(R.id.img_fotoPerfil);
         edt_nombre = view.findViewById(R.id.edt_nombre);
         edt_ciudad = view.findViewById(R.id.edt_ciudad);
         edt_correo = view.findViewById(R.id.edt_correo);
         btn_guardar = view.findViewById(R.id.btn_guardar);
-
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -105,43 +101,39 @@ public class Perfil extends Fragment {
                 .addOnFailureListener(e -> Toast.makeText(getContext(), "Error al actualizar Firestore: " + e.getMessage(), Toast.LENGTH_LONG).show());
     }
 
-    private void guardarCambios() {
-        String uid = mAuth.getCurrentUser().getUid();
-        String nombre = edt_nombre.getText().toString().trim();
-        String ciudad = edt_ciudad.getText().toString().trim();
-
-        db.collection("usuarios").document(uid)
-                .update("nombre", nombre, "ciudad", ciudad)
-                .addOnSuccessListener(unused ->
-                        Toast.makeText(getContext(), "Datos actualizados correctamente", Toast.LENGTH_SHORT).show()
-                )
-                .addOnFailureListener(e ->
-                        Toast.makeText(getContext(), "Error al actualizar datos: " + e.getMessage(), Toast.LENGTH_LONG).show()
-                );
-    }
-
     private void cargarDatosUsuario() {
         String uid = mAuth.getCurrentUser().getUid();
 
-        db.collection("usuarios").document(uid)
-                .get()
+        db.collection("usuarios").document(uid).get()
                 .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        Usuarios usuario = documentSnapshot.toObject(Usuarios.class);
-                        if (usuario != null) {
-                            edt_nombre.setText(usuario.getNombre());
-                            edt_ciudad.setText(usuario.getCiudad());
-                            edt_correo.setText(usuario.getCorreoElectronico());
+                    Usuarios usuario = documentSnapshot.toObject(Usuarios.class);
+                    if (usuario != null) {
+                        edt_nombre.setText(usuario.getNombre());
+                        edt_ciudad.setText(usuario.getCiudad());
+                        edt_correo.setText(usuario.getCorreoElectronico());
+                        edt_correo.setEnabled(false); // No editable
 
-                            Glide.with(requireContext())
-                                    .load(usuario.getFotoPerfil())
-                                    .placeholder(R.drawable.baseline_person_24)
-                                    .into(img_fotoPerfil);
-                        }
-                    } else {
-                        Toast.makeText(getContext(), "No se encontraron datos del usuario.", Toast.LENGTH_SHORT).show();
+                        Glide.with(requireContext())
+                                .load(usuario.getFotoPerfil())
+                                .placeholder(R.drawable.baseline_person_24)
+                                .into(img_fotoPerfil);
                     }
-                })
-                .addOnFailureListener(e -> Toast.makeText(getContext(), "Error al obtener perfil: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                });
+    }
+
+    private void guardarCambios() {
+        String uid = mAuth.getCurrentUser().getUid();
+        String nuevoNombre = edt_nombre.getText().toString().trim();
+        String nuevaCiudad = edt_ciudad.getText().toString().trim();
+
+        if (TextUtils.isEmpty(nuevoNombre) || TextUtils.isEmpty(nuevaCiudad)) {
+            Toast.makeText(getContext(), "Completa todos los campos", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        db.collection("usuarios").document(uid)
+                .update("nombre", nuevoNombre, "ciudad", nuevaCiudad)
+                .addOnSuccessListener(unused -> Toast.makeText(getContext(), "Perfil actualizado", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
     }
 }

@@ -24,6 +24,8 @@ public class MainScreenDueno extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen_dueno);
 
+
+
         bnv_dueno = findViewById(R.id.bnv_dueno);
         frameContainer = findViewById(R.id.frameContainer);
 
@@ -46,7 +48,7 @@ public class MainScreenDueno extends AppCompatActivity {
 
     private void loadFrag(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.frameContainer, fragment);
+        transaction.replace(R.id.frameContainerPaseador, fragment);
         transaction.commit();
     }
 }

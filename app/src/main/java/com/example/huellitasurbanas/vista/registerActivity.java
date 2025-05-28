@@ -25,6 +25,8 @@ public class registerActivity extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth;
 
+    private static final String FOTO_PERFIL_POR_DEFECTO = "https://firebasestorage.googleapis.com/v0/b/huellitasurbanas-c6820.appspot.com/o/defaultuser.jfif?alt=media";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,11 +41,9 @@ public class registerActivity extends AppCompatActivity {
         str_confirmPass = findViewById(R.id.str_confirmPass);
 
         btn_registrar = findViewById(R.id.btnRegister);
-        str_tieneCuenta =findViewById(R.id.alreadyHaveAccount);
+        str_tieneCuenta = findViewById(R.id.alreadyHaveAccount);
 
-
-
-        str_tieneCuenta.setOnClickListener(v -> startActivity(new Intent(registerActivity.this,MainActivity.class)));
+        str_tieneCuenta.setOnClickListener(v -> startActivity(new Intent(registerActivity.this, MainActivity.class)));
 
         btn_registrar.setOnClickListener(v -> {
             String email = str_email.getText().toString().trim();
@@ -59,25 +59,27 @@ public class registerActivity extends AppCompatActivity {
             } else if (!isPasswordValid(pass)) {
                 Toast.makeText(registerActivity.this, "La contraseña debe tener al menos 5 caracteres, una letra mayúscula, un número y un carácter especial.", Toast.LENGTH_LONG).show();
             } else {
-                registerUser(email, pass);
+                registerUser(email, pass, username, city);
             }
         });
     }
 
-    private void storeUser(String email, String username, String ciudad) {
-        db.collection("usuarios").document(Objects.requireNonNull(mAuth.getUid())).set(new Usuarios(username,  email,  R.drawable.baseline_person_24, ciudad,  0, mAuth.getUid()));
-    }
-
-    private void registerUser(String email, String pass) {
+    private void registerUser(String email, String pass, String username, String ciudad) {
         mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                String username = str_username.getText().toString().trim();
-                String ciudad = str_ciudad.getText().toString().trim();
-
                 String uid = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
 
+                Usuarios nuevoUsuario = new Usuarios(
+                        username,
+                        email,
+                        FOTO_PERFIL_POR_DEFECTO,
+                        ciudad,
+                        0.0,
+                        uid
+                );
+
                 db.collection("usuarios").document(uid)
-                        .set(new Usuarios(username, email, R.drawable.baseline_person_24, ciudad, 0, mAuth.getUid()))
+                        .set(nuevoUsuario)
                         .addOnSuccessListener(unused -> {
                             Toast.makeText(registerActivity.this, "Registro exitoso. ¡Bienvenido!", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(registerActivity.this, MainActivity.class));

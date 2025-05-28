@@ -1,15 +1,13 @@
 package com.example.huellitasurbanas.vista.fragment;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.example.huellitasurbanas.R;
 import com.example.huellitasurbanas.controlador.AdaptadorBuscar;
@@ -34,11 +32,20 @@ public class Buscar extends Fragment {
         rv_buscarPaseador.setLayoutManager(new LinearLayoutManager(getContext()));
 
         listaUsuarios = new ArrayList<>();
-        adaptador = new AdaptadorBuscar(listaUsuarios);
+        adaptador = new AdaptadorBuscar(listaUsuarios, usuario -> {
+            Chat chatFragment = new Chat();
+            Bundle args = new Bundle();
+            args.putString("receiverId", usuario.getUid());
+            chatFragment.setArguments(args);
+
+            requireActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.frameContainerPaseador, chatFragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
         rv_buscarPaseador.setAdapter(adaptador);
 
         cargarPaseadores();
-
         return view;
     }
 
@@ -52,12 +59,14 @@ public class Buscar extends Fragment {
                     listaUsuarios.clear();
                     for (DocumentSnapshot doc : queryDocumentSnapshots) {
                         Usuarios usuario = doc.toObject(Usuarios.class);
-                        listaUsuarios.add(usuario);
+                        if (usuario != null) {
+                            usuario.setUid(doc.getId());
+                            listaUsuarios.add(usuario);
+                        }
                     }
                     adaptador.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("Firestore", "Error al cargar paseadores", e);
                 });
     }
 }

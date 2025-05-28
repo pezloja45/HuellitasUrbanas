@@ -45,13 +45,10 @@ public class AdaptadorMascota extends RecyclerView.Adapter<AdaptadorMascota.View
                 .placeholder(R.drawable.baseline_person_150)
                 .error(R.drawable.baseline_error_150)
                 .into(holder.imgMascota);
-        holder.card_mascota.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentEditarConsultar = new Intent(v.getContext(), EditarConsultarMascota.class);
-                intentEditarConsultar.putExtra("uidMascota", mascota.getUid());
-                v.getContext().startActivity(intentEditarConsultar);
-            }
+        holder.card_mascota.setOnClickListener(v -> {
+            Intent intentEditarConsultar = new Intent(v.getContext(), EditarConsultarMascota.class);
+            intentEditarConsultar.putExtra("uidMascota", mascota.getUid());
+            v.getContext().startActivity(intentEditarConsultar);
         });
     }
 

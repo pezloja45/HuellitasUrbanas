@@ -1,5 +1,8 @@
 package com.example.huellitasurbanas;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,8 +10,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.huellitasurbanas.modelo.Mascota;
 import com.google.android.material.textfield.TextInputEditText;
@@ -47,7 +48,6 @@ public class EditarConsultarMascota extends AppCompatActivity {
             return;
         }
 
-        // Inicializa vistas
         editNombre = findViewById(R.id.edit_nombre);
         editRaza = findViewById(R.id.edit_raza);
         editEdad = findViewById(R.id.edit_edad);
