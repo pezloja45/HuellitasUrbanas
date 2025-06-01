@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.huellitasurbanas.EditarConsultarMascota;
 import com.example.huellitasurbanas.R;
 import com.example.huellitasurbanas.modelo.Mascota;
@@ -40,9 +41,10 @@ public class AdaptadorMascota extends RecyclerView.Adapter<AdaptadorMascota.View
         holder.nombreMascota.setText(mascota.getNombre());
         holder.razaMascota.setText(mascota.getRaza());
         holder.edadMascota.setText("Edad: " + mascota.getEdad());
-        Picasso.get()
+        Glide.with(holder.itemView.getContext())
                 .load(mascota.getFotoUrl())
                 .placeholder(R.drawable.baseline_person_150)
+                .circleCrop()
                 .error(R.drawable.baseline_error_150)
                 .into(holder.imgMascota);
         holder.card_mascota.setOnClickListener(v -> {

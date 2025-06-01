@@ -8,9 +8,11 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,12 +28,16 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.util.Arrays;
+
 public class Perfil extends Fragment {
 
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
 
-    private EditText edt_nombre, edt_ciudad, edt_correo;
+    private EditText edt_nombre, edt_correo;
+    private Spinner spinner_ciudad;
+
     private Button btn_guardar;
     private ImageView img_fotoPerfil;
 
@@ -53,9 +59,16 @@ public class Perfil extends Fragment {
 
         img_fotoPerfil = view.findViewById(R.id.img_fotoPerfil);
         edt_nombre = view.findViewById(R.id.edt_nombre);
-        edt_ciudad = view.findViewById(R.id.edt_ciudad);
         edt_correo = view.findViewById(R.id.edt_correo);
         btn_guardar = view.findViewById(R.id.btn_guardar);
+
+        spinner_ciudad = view.findViewById(R.id.spinner_ciudad);
+
+        String[] ciudades = getResources().getStringArray(R.array.ciudades_es);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, ciudades);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_ciudad.setAdapter(adapter);
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -99,6 +112,8 @@ public class Perfil extends Fragment {
                     Glide.with(requireContext())
                             .load(imageUrl)
                             .placeholder(R.drawable.baseline_person_24)
+                            .error(R.drawable.baseline_person_24)
+                            .circleCrop()
                             .into(img_fotoPerfil);
                     Toast.makeText(getContext(), "Foto de perfil actualizada", Toast.LENGTH_SHORT).show();
                 })
@@ -108,7 +123,7 @@ public class Perfil extends Fragment {
     private void guardarCambios() {
         String uid = mAuth.getCurrentUser().getUid();
         String nombre = edt_nombre.getText().toString().trim();
-        String ciudad = edt_ciudad.getText().toString().trim();
+        String ciudad = spinner_ciudad.getSelectedItem().toString();
 
         db.collection("usuarios").document(uid)
                 .update("nombre", nombre, "ciudad", ciudad)
@@ -130,12 +145,20 @@ public class Perfil extends Fragment {
                         Usuarios usuario = documentSnapshot.toObject(Usuarios.class);
                         if (usuario != null) {
                             edt_nombre.setText(usuario.getNombre());
-                            edt_ciudad.setText(usuario.getCiudad());
+                            String ciudadUsuario = usuario.getCiudad();
+                            String[] ciudades = getResources().getStringArray(R.array.ciudades_es);
+
+                            int index = Arrays.asList(ciudades).indexOf(ciudadUsuario);
+                            if (index >= 0) {
+                                spinner_ciudad.setSelection(index);
+                            }
+
                             edt_correo.setText(usuario.getCorreoElectronico());
 
                             Glide.with(requireContext())
                                     .load(usuario.getFotoPerfil())
                                     .placeholder(R.drawable.baseline_person_24)
+                                    .circleCrop()
                                     .into(img_fotoPerfil);
                         }
                     } else {

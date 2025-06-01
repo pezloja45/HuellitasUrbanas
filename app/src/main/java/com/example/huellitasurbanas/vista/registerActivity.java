@@ -2,8 +2,10 @@ package com.example.huellitasurbanas.vista;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,12 +38,21 @@ public class registerActivity extends AppCompatActivity {
 
         str_username = findViewById(R.id.inputUsername);
         str_email = findViewById(R.id.str_email);
-        str_ciudad = findViewById(R.id.str_emailInicio);
         str_pass = findViewById(R.id.str_pass);
         str_confirmPass = findViewById(R.id.str_confirmPass);
 
         btn_registrar = findViewById(R.id.btnRegister);
         str_tieneCuenta = findViewById(R.id.alreadyHaveAccount);
+
+        Spinner spinnerCiudad = findViewById(R.id.spinner_ciudad);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                this,
+                R.array.ciudades_es,
+                android.R.layout.simple_spinner_item
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCiudad.setAdapter(adapter);
+
 
         str_tieneCuenta.setOnClickListener(v -> startActivity(new Intent(registerActivity.this, MainActivity.class)));
 

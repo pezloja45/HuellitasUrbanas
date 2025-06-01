@@ -9,8 +9,10 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -31,7 +33,8 @@ public class PerfilPaseador extends Fragment {
     private FirebaseFirestore db;
 
     private ImageView img_fotoPerfil;
-    private EditText edt_nombre, edt_ciudad, edt_correo;
+    private EditText edt_nombre, edt_correo;
+    private Spinner spinner_ciudad;
     private View btn_guardar;
 
     private Uri selectedImageUri;
@@ -50,9 +53,20 @@ public class PerfilPaseador extends Fragment {
 
         img_fotoPerfil = view.findViewById(R.id.img_fotoPerfil);
         edt_nombre = view.findViewById(R.id.edt_nombre);
-        edt_ciudad = view.findViewById(R.id.edt_ciudad);
         edt_correo = view.findViewById(R.id.edt_correo);
         btn_guardar = view.findViewById(R.id.btn_guardar);
+
+        spinner_ciudad = view.findViewById(R.id.spinner_ciudad);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.ciudades_es,
+                android.R.layout.simple_spinner_item);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinner_ciudad.setAdapter(adapter);
+
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -95,6 +109,7 @@ public class PerfilPaseador extends Fragment {
                     Glide.with(requireContext())
                             .load(imageUrl)
                             .placeholder(R.drawable.baseline_person_24)
+                            .circleCrop()
                             .into(img_fotoPerfil);
                     Toast.makeText(getContext(), "Foto de perfil actualizada", Toast.LENGTH_SHORT).show();
                 })
@@ -109,14 +124,23 @@ public class PerfilPaseador extends Fragment {
                     Usuarios usuario = documentSnapshot.toObject(Usuarios.class);
                     if (usuario != null) {
                         edt_nombre.setText(usuario.getNombre());
-                        edt_ciudad.setText(usuario.getCiudad());
+                        String ciudadUsuario = usuario.getCiudad();
+                        ArrayAdapter<CharSequence> adapter = (ArrayAdapter<CharSequence>) spinner_ciudad.getAdapter();
+                        if (adapter != null) {
+                            int position = adapter.getPosition(ciudadUsuario);
+                            if (position >= 0) {
+                                spinner_ciudad.setSelection(position);
+                            }
+                        }
                         edt_correo.setText(usuario.getCorreoElectronico());
-                        edt_correo.setEnabled(false); // No editable
-
+                        edt_correo.setEnabled(false);
                         Glide.with(requireContext())
                                 .load(usuario.getFotoPerfil())
                                 .placeholder(R.drawable.baseline_person_24)
+                                .error(R.drawable.baseline_person_24)
+                                .circleCrop()
                                 .into(img_fotoPerfil);
+
                     }
                 });
     }
@@ -124,7 +148,7 @@ public class PerfilPaseador extends Fragment {
     private void guardarCambios() {
         String uid = mAuth.getCurrentUser().getUid();
         String nuevoNombre = edt_nombre.getText().toString().trim();
-        String nuevaCiudad = edt_ciudad.getText().toString().trim();
+        String nuevaCiudad = spinner_ciudad.getSelectedItem().toString();
 
         if (TextUtils.isEmpty(nuevoNombre) || TextUtils.isEmpty(nuevaCiudad)) {
             Toast.makeText(getContext(), "Completa todos los campos", Toast.LENGTH_SHORT).show();

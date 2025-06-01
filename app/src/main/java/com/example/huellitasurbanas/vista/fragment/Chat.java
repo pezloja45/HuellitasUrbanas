@@ -23,9 +23,13 @@ import com.example.huellitasurbanas.modelo.Usuarios;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Chat extends Fragment {
 
@@ -35,20 +39,16 @@ public class Chat extends Fragment {
     private EditText editMessage;
     private Button btnSend;
     private RecyclerView recyclerView;
-
-    // Para mensajes individuales
     private List<Message> messageList = new ArrayList<>();
     private AdaptadorMensaje adapterMensajes;
-
-    // Para lista de chats abiertos
     private List<ChatItem> listaChats = new ArrayList<>();
     private AdaptadorChatsAbiertos adaptadorChatsAbiertos;
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
+        View inputLayout = view.findViewById(R.id.layout_message_input);
 
         db = FirebaseFirestore.getInstance();
         senderId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -61,30 +61,40 @@ public class Chat extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_messages);
 
         if (receiverId == null) {
-            // Modo lista chats abiertos
+            inputLayout.setVisibility(View.GONE);
             editMessage = null;
             btnSend = null;
 
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-            adaptadorChatsAbiertos = new AdaptadorChatsAbiertos(getContext(), listaChats, chatItem -> {
-                //Usuarios usuario = chatItem.getUsuario();
-                Chat chatFragment = new Chat();
-                Bundle args = new Bundle();
-                //args.putString("receiverId", usuario.getUid());
-                chatFragment.setArguments(args);
-                requireActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.frameContainerPaseador, chatFragment)
-                        .addToBackStack(null)
-                        .commit();
+            adaptadorChatsAbiertos = new AdaptadorChatsAbiertos(getContext(), listaChats, new AdaptadorChatsAbiertos.OnChatClickListener() {
+                @Override
+                public void onChatClick(ChatItem chatItem) {
+                    Usuarios usuario = chatItem.getUsuario();
+                    Chat chatFragment = new Chat();
+                    Bundle args = new Bundle();
+                    args.putString("receiverId", usuario.getUid());
+                    chatFragment.setArguments(args);
+                    requireActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.frameContainer, chatFragment)
+                            .addToBackStack(null)
+                            .commit();
+                }
+
+                @Override
+                public void onChatLongClick(ChatItem chatItem) {
+                    Toast.makeText(getContext(), "Solo los paseadores pueden ver mascotas del dueño.", Toast.LENGTH_SHORT).show();
+                }
             });
+
             recyclerView.setAdapter(adaptadorChatsAbiertos);
 
             cargarChatsAbiertos();
 
         } else {
-            // Modo chat individual
+            inputLayout.setVisibility(View.VISIBLE);
+
             chatId = senderId.compareTo(receiverId) < 0 ? senderId + "_" + receiverId : receiverId + "_" + senderId;
 
             editMessage = view.findViewById(R.id.edit_message);
@@ -139,7 +149,7 @@ public class Chat extends Fragment {
                                                 .addOnSuccessListener(mensajesSnapshot -> {
                                                     String texto = "Sin mensajes aún";
                                                     if (!mensajesSnapshot.isEmpty()) {
-                                                        texto = mensajesSnapshot.getDocuments().get(0).getString("texto");
+                                                        texto = mensajesSnapshot.getDocuments().get(0).getString("message");
                                                     }
 
                                                     listaChats.add(new ChatItem(usuario, texto));
@@ -160,15 +170,22 @@ public class Chat extends Fragment {
 
         Message msg = new Message(senderId, receiverId, text, System.currentTimeMillis());
 
-        db.collection("chats").document(chatId).collection("messages")
-                .add(msg)
-                .addOnSuccessListener(documentReference -> {
-                    editMessage.setText("");
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(getContext(), "Error al enviar mensaje", Toast.LENGTH_SHORT).show();
+        Map<String, Object> chatInfo = new HashMap<>();
+        chatInfo.put("usuarios", Arrays.asList(senderId, receiverId));
+        db.collection("chats").document(chatId)
+                .set(chatInfo, SetOptions.merge())
+                .addOnSuccessListener(aVoid -> {
+                    db.collection("chats").document(chatId).collection("messages")
+                            .add(msg)
+                            .addOnSuccessListener(documentReference -> {
+                                editMessage.setText("");
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(getContext(), "Error al enviar mensaje", Toast.LENGTH_SHORT).show();
+                            });
                 });
     }
+
 
     private void listenForMessages() {
         db.collection("chats").document(chatId).collection("messages")

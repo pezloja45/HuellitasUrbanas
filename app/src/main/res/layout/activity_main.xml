@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/backMain"
+    android:background="@color/btnMains"
     tools:context=".vista.MainActivity">
 
 
@@ -12,14 +12,14 @@
         android:id="@+id/logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:text="Inicio de sesión"
+        android:layout_marginTop="32dp"
+        android:text="Loggin"
         android:textColor="@color/colorWhite"
         android:textSize="36sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <EditText
         android:id="@+id/str_pass"
@@ -65,7 +65,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/logo" />
 
     <TextView
         android:id="@+id/forgotPassword"
@@ -84,7 +84,7 @@
         android:layout_width="140dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="60dp"
-        android:backgroundTint="@color/btnMains"
+        android:backgroundTint="@color/mainOscuro"
         android:text="Entrar"
         app:layout_constraintStart_toStartOf="@+id/str_pass"
         app:layout_constraintTop_toBottomOf="@+id/str_pass" />
@@ -123,7 +123,7 @@
         android:id="@+id/btnGoogle"
         android:layout_width="140dp"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/btnMains"
+        android:backgroundTint="@color/mainOscuro"
         android:drawablePadding="10dp"
         android:paddingLeft="20dp"
         android:text="Google"
@@ -138,9 +138,9 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_marginTop="32dp"
-        app:layout_constraintEnd_toEndOf="@+id/logo"
-        app:layout_constraintStart_toStartOf="@+id/logo"
-        app:layout_constraintTop_toBottomOf="@+id/logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/logo" />
 
 
