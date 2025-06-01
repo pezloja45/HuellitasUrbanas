@@ -39,7 +39,7 @@ public class Buscar extends Fragment {
             chatFragment.setArguments(args);
 
             requireActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.frameContainerPaseador, chatFragment)
+                    .replace(R.id.frameContainer, chatFragment)
                     .addToBackStack(null)
                     .commit();
         });

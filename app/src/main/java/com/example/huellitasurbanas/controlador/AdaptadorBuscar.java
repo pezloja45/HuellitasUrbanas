@@ -47,6 +47,7 @@ public class AdaptadorBuscar extends RecyclerView.Adapter<AdaptadorBuscar.ViewHo
         Glide.with(holder.itemView.getContext())
                 .load(usuario.getFotoPerfil())
                 .placeholder(R.drawable.baseline_person_150)
+                .circleCrop()
                 .into(holder.img_perfilPaseadorCard);
 
 

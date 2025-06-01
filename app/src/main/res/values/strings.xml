@@ -7,4 +7,32 @@
         <item>Mediano</item>
         <item>Grande</item>
     </string-array>
+
+    <string-array name="ciudades_es">
+    <item>Madrid</item>
+    <item>Barcelona</item>
+    <item>Valencia</item>
+    <item>Sevilla</item>
+    <item>Zaragoza</item>
+    <item>Málaga</item>
+    <item>Murcia</item>
+    <item>Palma</item>
+    <item>Las Palmas de Gran Canaria</item>
+    <item>Bilbao</item>
+    <item>Alicante</item>
+    <item>Córdoba</item>
+    <item>Valladolid</item>
+    <item>Vigo</item>
+    <item>Gijón</item>
+    <item>Hospitalet de Llobregat</item>
+    <item>A Coruña</item>
+    <item>Vitoria-Gasteiz</item>
+    <item>Granada</item>
+    <item>Elche</item>
+    <item>Oviedo</item>
+    <item>Badalona</item>
+    <item>Cartagena</item>
+    <item>Tarragona</item>
+    <item>Santander</item>
+    </string-array>
 </resources>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/btnMains">
@@ -7,10 +8,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="24dp"
+        android:gravity="center_horizontal">
 
+        <!-- Imagen de perfil -->
         <ImageView
             android:id="@+id/img_fotoPerfil"
             android:layout_width="120dp"
@@ -19,40 +21,88 @@
             android:scaleType="centerCrop"
             android:src="@drawable/baseline_person_150" />
 
-        <EditText
-            android:id="@+id/edt_nombre"
+        <!-- Campo nombre -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_nombre"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:hint="Nombre"
-            android:textColor="#FFFFFF"
-            android:textColorHint="@color/colorWhite"
-            android:textSize="20sp" />
+            app:boxStrokeColor="@color/colorWhite"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxBackgroundColor="@android:color/transparent"
+            app:hintTextColor="@color/colorWhite">
 
-        <EditText
-            android:id="@+id/edt_ciudad"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edt_nombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:textColorHint="@color/colorWhite" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Campo ciudad con Spinner estilizado -->
+        <LinearLayout
+            android:id="@+id/layout_ciudad"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:hint="Ciudad"
-            android:textColor="#FFFFFF"
-            android:textColorHint="@color/colorWhite" />
+            android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/edt_correo"
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="4dp"
+                android:paddingBottom="4dp"
+                android:text="Ciudad"
+                android:textColor="@color/colorWhite"
+                android:textSize="12sp" />
+
+            <Spinner
+                android:id="@+id/spinner_ciudad"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:background="@drawable/spinner_bg"
+                android:backgroundTint="@color/colorWhite"
+                android:popupBackground="@color/mainOscuro"
+                android:spinnerMode="dropdown"
+                android:textAlignment="center" />
+        </LinearLayout>
+
+        <!-- Campo correo electrónico deshabilitado -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layout_correo"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
+            android:layout_marginBottom="16dp"
             android:hint="Correo electrónico"
-            android:textColor="#FFFFFF"
-            android:textColorHint="@color/colorWhite" />
+            app:boxStrokeColor="@color/colorWhite"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxBackgroundColor="@android:color/transparent"
+            app:hintTextColor="@color/colorWhite">
 
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edt_correo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:textColor="#FFFFFF"
+                android:textColorHint="@color/colorWhite" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Botón guardar -->
         <Button
             android:id="@+id/btn_guardar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:backgroundTint="@color/mainOscuro"
             android:text="Guardar cambios" />
-
     </LinearLayout>
 </ScrollView>

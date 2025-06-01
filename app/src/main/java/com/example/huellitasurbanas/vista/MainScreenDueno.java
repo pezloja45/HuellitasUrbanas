@@ -24,10 +24,11 @@ public class MainScreenDueno extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen_dueno);
 
-
-
         bnv_dueno = findViewById(R.id.bnv_dueno);
         frameContainer = findViewById(R.id.frameContainer);
+
+        loadFrag(new Chat());
+        bnv_dueno.setSelectedItemId(R.id.bnt_chatDueno);
 
         bnv_dueno.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.bnt_chatDueno) {
@@ -48,7 +49,7 @@ public class MainScreenDueno extends AppCompatActivity {
 
     private void loadFrag(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.frameContainerPaseador, fragment);
+        transaction.replace(R.id.frameContainer, fragment);
         transaction.commit();
     }
 }

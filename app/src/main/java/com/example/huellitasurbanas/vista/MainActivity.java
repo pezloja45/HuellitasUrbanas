@@ -117,10 +117,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void redirigirPorRol(String rol) {
         if (rol.equalsIgnoreCase("paseador")) {
-            Toast.makeText(MainActivity.this, "Bienvenido, paseador.", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(MainActivity.this, MainScreenPaseador.class));
         } else if (rol.equalsIgnoreCase("dueño")) {
-            Toast.makeText(MainActivity.this, "Bienvenido, dueño de mascota.", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(MainActivity.this, MainScreenDueno.class));
         } else {
             Toast.makeText(MainActivity.this, "Rol no reconocido: " + rol, Toast.LENGTH_LONG).show();

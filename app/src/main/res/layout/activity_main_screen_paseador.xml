@@ -5,13 +5,13 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFC690"
-    tools:context=".vista.MainScreenDueno">
+    tools:context=".vista.MainScreenPaseador">
 
     <FrameLayout
         android:id="@+id/frameContainerPaseador"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@color/btnMains"
         app:layout_constraintBottom_toTopOf="@+id/bnv_paseador"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,9 +21,9 @@
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bnv_paseador"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFBB7B"
+        app:backgroundTint="@color/mainOscuro"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
