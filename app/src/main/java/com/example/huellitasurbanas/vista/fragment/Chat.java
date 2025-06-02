@@ -31,6 +31,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Fragmento que maneja la interfaz de chat.
+ * Si no hay receiverId, muestra la lista de chats abiertos.
+ * Si receiverId está presente, muestra la conversación con ese usuario.
+ */
 public class Chat extends Fragment {
 
     private FirebaseFirestore db;
@@ -39,28 +44,35 @@ public class Chat extends Fragment {
     private EditText editMessage;
     private Button btnSend;
     private RecyclerView recyclerView;
+
     private List<Message> messageList = new ArrayList<>();
     private AdaptadorMensaje adapterMensajes;
+
     private List<ChatItem> listaChats = new ArrayList<>();
     private AdaptadorChatsAbiertos adaptadorChatsAbiertos;
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_chat, container, false);
-        View inputLayout = view.findViewById(R.id.layout_message_input);
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
 
+        View view = inflater.inflate(R.layout.fragment_chat, container, false);
+
+        // Inicializar Firestore y obtener senderId
         db = FirebaseFirestore.getInstance();
         senderId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        receiverId = null;
+        // Obtener receiverId de argumentos (si existe)
         if (getArguments() != null) {
             receiverId = getArguments().getString("receiverId");
         }
 
         recyclerView = view.findViewById(R.id.recycler_messages);
+        View inputLayout = view.findViewById(R.id.layout_message_input);
 
         if (receiverId == null) {
+            // Mostrar lista de chats abiertos (sin input de mensaje)
             inputLayout.setVisibility(View.GONE);
             editMessage = null;
             btnSend = null;
@@ -70,6 +82,7 @@ public class Chat extends Fragment {
             adaptadorChatsAbiertos = new AdaptadorChatsAbiertos(getContext(), listaChats, new AdaptadorChatsAbiertos.OnChatClickListener() {
                 @Override
                 public void onChatClick(ChatItem chatItem) {
+                    // Al hacer click, abrir chat con usuario seleccionado
                     Usuarios usuario = chatItem.getUsuario();
                     Chat chatFragment = new Chat();
                     Bundle args = new Bundle();
@@ -93,9 +106,12 @@ public class Chat extends Fragment {
             cargarChatsAbiertos();
 
         } else {
+            // Mostrar chat con input para enviar mensajes
             inputLayout.setVisibility(View.VISIBLE);
 
-            chatId = senderId.compareTo(receiverId) < 0 ? senderId + "_" + receiverId : receiverId + "_" + senderId;
+            // Crear ID único para el chat basado en ambos UIDs, ordenados para evitar duplicados
+            chatId = senderId.compareTo(receiverId) < 0 ?
+                    senderId + "_" + receiverId : receiverId + "_" + senderId;
 
             editMessage = view.findViewById(R.id.edit_message);
             btnSend = view.findViewById(R.id.btn_send);
@@ -112,6 +128,9 @@ public class Chat extends Fragment {
         return view;
     }
 
+    /**
+     * Carga la lista de chats abiertos donde participa el usuario.
+     */
     private void cargarChatsAbiertos() {
         listaChats.clear();
 
@@ -123,6 +142,9 @@ public class Chat extends Fragment {
                         String chatId = chatDoc.getId();
                         List<String> usuarios = (List<String>) chatDoc.get("usuarios");
 
+                        if (usuarios == null || usuarios.size() < 2) continue;
+
+                        // Encontrar UID del otro usuario
                         String otroUid = null;
                         for (String uid : usuarios) {
                             if (!uid.equals(senderId)) {
@@ -140,6 +162,7 @@ public class Chat extends Fragment {
                                         if (usuario == null) return;
                                         usuario.setUid(finalOtroUid);
 
+                                        // Obtener último mensaje del chat
                                         db.collection("chats")
                                                 .document(chatId)
                                                 .collection("messages")
@@ -164,7 +187,12 @@ public class Chat extends Fragment {
                 });
     }
 
+    /**
+     * Envía un mensaje al chat actual.
+     */
     private void sendMessage() {
+        if (editMessage == null) return;
+
         String text = editMessage.getText().toString().trim();
         if (text.isEmpty()) return;
 
@@ -172,6 +200,7 @@ public class Chat extends Fragment {
 
         Map<String, Object> chatInfo = new HashMap<>();
         chatInfo.put("usuarios", Arrays.asList(senderId, receiverId));
+
         db.collection("chats").document(chatId)
                 .set(chatInfo, SetOptions.merge())
                 .addOnSuccessListener(aVoid -> {
@@ -186,7 +215,9 @@ public class Chat extends Fragment {
                 });
     }
 
-
+    /**
+     * Escucha en tiempo real los mensajes del chat y actualiza la lista.
+     */
     private void listenForMessages() {
         db.collection("chats").document(chatId).collection("messages")
                 .orderBy("timestamp")

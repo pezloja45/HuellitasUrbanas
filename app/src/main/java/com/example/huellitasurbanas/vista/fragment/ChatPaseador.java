@@ -1,15 +1,14 @@
 package com.example.huellitasurbanas.vista.fragment;
 
 import android.app.AlertDialog;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +27,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Fragment para que el paseador vea chats abiertos con dueños.
+ * Además, puede ver mascotas del dueño con click largo.
+ */
 public class ChatPaseador extends Fragment {
 
     private FirebaseFirestore db;
@@ -39,7 +42,8 @@ public class ChatPaseador extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat_paseador, container, false);
 
@@ -78,6 +82,9 @@ public class ChatPaseador extends Fragment {
         return view;
     }
 
+    /**
+     * Muestra un diálogo con las mascotas registradas del dueño.
+     */
     private void mostrarMascotasDeUsuario(String uid) {
         db.collection("mascotas")
                 .whereEqualTo("uidDueno", uid)
@@ -117,11 +124,13 @@ public class ChatPaseador extends Fragment {
 
                     dialog.show();
                 })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(getContext(), "Error al cargar mascotas", Toast.LENGTH_SHORT).show();
-                });
+                .addOnFailureListener(e -> Toast.makeText(getContext(), "Error al cargar mascotas", Toast.LENGTH_SHORT).show());
     }
 
+    /**
+     * Carga la lista de chats abiertos en los que participa el paseador
+     * mostrando sólo los mensajes recibidos de dueños.
+     */
     private void cargarChatsDeDueños() {
         listaChats.clear();
 
@@ -132,6 +141,8 @@ public class ChatPaseador extends Fragment {
                     for (DocumentSnapshot chatDoc : querySnapshot.getDocuments()) {
                         String chatId = chatDoc.getId();
                         List<String> usuarios = (List<String>) chatDoc.get("usuarios");
+
+                        if (usuarios == null || usuarios.size() < 2) continue;
 
                         String otroUid = null;
                         for (String uid : usuarios) {
@@ -144,17 +155,19 @@ public class ChatPaseador extends Fragment {
                         if (otroUid != null) {
                             final String finalOtroUid = otroUid;
 
+                            // Obtener último mensaje (orden ascendente para coger primero, o DESC + limit 1 para último)
                             db.collection("chats").document(chatId).collection("messages")
-                                    .orderBy("timestamp")
+                                    .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
                                     .limit(1)
                                     .get()
                                     .addOnSuccessListener(mensajesSnapshot -> {
                                         if (!mensajesSnapshot.isEmpty()) {
-                                            DocumentSnapshot primerMensaje = mensajesSnapshot.getDocuments().get(0);
-                                            String sender = primerMensaje.getString("senderId");
+                                            DocumentSnapshot ultimoMensaje = mensajesSnapshot.getDocuments().get(0);
+                                            String sender = ultimoMensaje.getString("senderId");
 
+                                            // Sólo mostrar si el último mensaje es del dueño (no del paseador)
                                             if (!paseadorId.equals(sender)) {
-                                                String texto = primerMensaje.getString("message");
+                                                String texto = ultimoMensaje.getString("message");
 
                                                 db.collection("usuarios").document(finalOtroUid)
                                                         .get()
@@ -172,8 +185,6 @@ public class ChatPaseador extends Fragment {
                         }
                     }
                 })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(getContext(), "Error al cargar chats", Toast.LENGTH_SHORT).show();
-                });
+                .addOnFailureListener(e -> Toast.makeText(getContext(), "Error al cargar chats", Toast.LENGTH_SHORT).show());
     }
 }

@@ -43,7 +43,9 @@ public class PerfilPaseador extends Fragment {
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                     selectedImageUri = result.getData().getData();
-                    subirImagenAFirebase(selectedImageUri);
+                    if (selectedImageUri != null) {
+                        subirImagenAFirebase(selectedImageUri);
+                    }
                 }
             });
 
@@ -55,7 +57,6 @@ public class PerfilPaseador extends Fragment {
         edt_nombre = view.findViewById(R.id.edt_nombre);
         edt_correo = view.findViewById(R.id.edt_correo);
         btn_guardar = view.findViewById(R.id.btn_guardar);
-
         spinner_ciudad = view.findViewById(R.id.spinner_ciudad);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
@@ -64,14 +65,16 @@ public class PerfilPaseador extends Fragment {
                 android.R.layout.simple_spinner_item);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
         spinner_ciudad.setAdapter(adapter);
-
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        cargarDatosUsuario();
+        if (mAuth.getCurrentUser() != null) {
+            cargarDatosUsuario();
+        } else {
+            Toast.makeText(getContext(), "Usuario no autenticado", Toast.LENGTH_SHORT).show();
+        }
 
         btn_guardar.setOnClickListener(v -> guardarCambios());
 
@@ -86,26 +89,33 @@ public class PerfilPaseador extends Fragment {
     }
 
     private void subirImagenAFirebase(Uri imageUri) {
-        if (imageUri == null || mAuth.getCurrentUser() == null) return;
+        if (imageUri == null || mAuth.getCurrentUser() == null) {
+            Toast.makeText(getContext(), "No hay imagen o usuario válido", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         String uid = mAuth.getCurrentUser().getUid();
+        btn_guardar.setEnabled(false);
+        Toast.makeText(getContext(), "Subiendo imagen...", Toast.LENGTH_SHORT).show();
 
         FirebaseStorage.getInstance()
                 .getReference("fotos_perfil/" + uid + ".jpg")
                 .putFile(imageUri)
-                .addOnSuccessListener(taskSnapshot -> {
-                    taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(uri -> {
-                        String imageUrl = uri.toString();
-                        actualizarFotoEnFirestore(uid, imageUrl);
-                    });
-                })
-                .addOnFailureListener(e -> Toast.makeText(getContext(), "Error al subir imagen: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                .addOnSuccessListener(taskSnapshot -> taskSnapshot.getStorage().getDownloadUrl().addOnSuccessListener(uri -> {
+                    String imageUrl = uri.toString();
+                    actualizarFotoEnFirestore(uid, imageUrl);
+                }))
+                .addOnFailureListener(e -> {
+                    btn_guardar.setEnabled(true);
+                    Toast.makeText(getContext(), "Error al subir imagen: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
     }
 
     private void actualizarFotoEnFirestore(String uid, String imageUrl) {
         db.collection("usuarios").document(uid)
                 .update("fotoPerfil", imageUrl)
                 .addOnSuccessListener(unused -> {
+                    btn_guardar.setEnabled(true);
                     Glide.with(requireContext())
                             .load(imageUrl)
                             .placeholder(R.drawable.baseline_person_24)
@@ -113,7 +123,10 @@ public class PerfilPaseador extends Fragment {
                             .into(img_fotoPerfil);
                     Toast.makeText(getContext(), "Foto de perfil actualizada", Toast.LENGTH_SHORT).show();
                 })
-                .addOnFailureListener(e -> Toast.makeText(getContext(), "Error al actualizar Firestore: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                .addOnFailureListener(e -> {
+                    btn_guardar.setEnabled(true);
+                    Toast.makeText(getContext(), "Error al actualizar Firestore: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
     }
 
     private void cargarDatosUsuario() {
@@ -140,24 +153,38 @@ public class PerfilPaseador extends Fragment {
                                 .error(R.drawable.baseline_person_24)
                                 .circleCrop()
                                 .into(img_fotoPerfil);
-
                     }
-                });
+                })
+                .addOnFailureListener(e -> Toast.makeText(getContext(), "Error al cargar perfil: " + e.getMessage(), Toast.LENGTH_LONG).show());
     }
 
     private void guardarCambios() {
+        if (mAuth.getCurrentUser() == null) {
+            Toast.makeText(getContext(), "Usuario no autenticado", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String uid = mAuth.getCurrentUser().getUid();
         String nuevoNombre = edt_nombre.getText().toString().trim();
         String nuevaCiudad = spinner_ciudad.getSelectedItem().toString();
 
-        if (TextUtils.isEmpty(nuevoNombre) || TextUtils.isEmpty(nuevaCiudad)) {
+        if (nuevoNombre.isEmpty() || nuevaCiudad.isEmpty()) {
             Toast.makeText(getContext(), "Completa todos los campos", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        btn_guardar.setEnabled(false);
+        Toast.makeText(getContext(), "Guardando cambios...", Toast.LENGTH_SHORT).show();
+
         db.collection("usuarios").document(uid)
                 .update("nombre", nuevoNombre, "ciudad", nuevaCiudad)
-                .addOnSuccessListener(unused -> Toast.makeText(getContext(), "Perfil actualizado", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                .addOnSuccessListener(unused -> {
+                    btn_guardar.setEnabled(true);
+                    Toast.makeText(getContext(), "Perfil actualizado", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    btn_guardar.setEnabled(true);
+                    Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
     }
 }
