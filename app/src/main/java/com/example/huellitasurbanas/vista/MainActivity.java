@@ -22,7 +22,6 @@ public class MainActivity extends AppCompatActivity {
     Button btn_login;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-
     private FirebaseAuth mAuth;
 
     @Override
@@ -37,17 +36,17 @@ public class MainActivity extends AppCompatActivity {
         btn_login = findViewById(R.id.btn_login);
         str_crearCuenta = findViewById(R.id.str_crearCuenta);
 
-        str_crearCuenta.setOnClickListener(view -> startActivity(new Intent(MainActivity.this,registerActivity.class)));
+        str_crearCuenta.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, registerActivity.class)));
 
         btn_login.setOnClickListener(v -> {
-            String email = str_email.getText().toString();
-            String pass = str_pass.getText().toString();
+            String email = str_email.getText().toString().trim();
+            String pass = str_pass.getText().toString().trim();
 
-            if (email.isEmpty() && pass.isEmpty()) {
-                Toast.makeText(MainActivity.this, "Ingresa los datos", Toast.LENGTH_SHORT).show();
-            } else {
-                loginUser(email, pass);
+            if (email.isEmpty() || pass.isEmpty()) {
+                Toast.makeText(MainActivity.this, "Por favor ingresa correo y contraseña", Toast.LENGTH_SHORT).show();
+                return;
             }
+            loginUser(email, pass);
         });
     }
 
@@ -69,50 +68,34 @@ public class MainActivity extends AppCompatActivity {
                                         Toast.makeText(MainActivity.this, "No se encontraron datos del usuario en la base de datos.", Toast.LENGTH_SHORT).show();
                                     }
                                 })
-                                .addOnFailureListener(e -> {
-                                    Toast.makeText(MainActivity.this, "Error al obtener información del usuario: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                                });
+                                .addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Error al obtener información del usuario: " + e.getMessage(), Toast.LENGTH_LONG).show());
                     } else {
                         Toast.makeText(MainActivity.this, "Correo o contraseña incorrectos. Intenta nuevamente.", Toast.LENGTH_LONG).show();
                         Log.e("LoginError", "Fallo al iniciar sesión: ", task.getException());
                     }
                 })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(MainActivity.this, "Error de conexión o fallo inesperado: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                });
+                .addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Error de conexión o fallo inesperado: " + e.getMessage(), Toast.LENGTH_LONG).show());
     }
 
     private void mostrarDialogoDeRol(String uid) {
         new AlertDialog.Builder(MainActivity.this)
                 .setTitle("Selecciona tu rol")
                 .setMessage("¿Con qué rol deseas continuar?")
-                .setPositiveButton("Paseador", (dialog, which) -> {
-                    db.collection("usuarios").document(uid)
-                            .update("rol", "paseador")
-                            .addOnSuccessListener(unused -> {
-                                Toast.makeText(MainActivity.this, "Rol asignado: Paseador", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(MainActivity.this, MainScreenPaseador.class));
-                                finish();
-                            })
-                            .addOnFailureListener(e -> {
-                                Toast.makeText(MainActivity.this, "Error al guardar el rol: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                            });
-                })
-                .setNegativeButton("Dueño", (dialog, which) -> {
-                    db.collection("usuarios").document(uid)
-                            .update("rol", "dueño")
-                            .addOnSuccessListener(unused -> {
-                                Toast.makeText(MainActivity.this, "Rol asignado: Dueño de mascota", Toast.LENGTH_SHORT).show();
-                                startActivity(new Intent(MainActivity.this, MainScreenDueno.class));
-                                finish();
-                            })
-                            .addOnFailureListener(e -> {
-                                Toast.makeText(MainActivity.this, "Error al guardar el rol: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                            });
-                })
+                .setPositiveButton("Paseador", (dialog, which) -> asignarRolYRedirigir(uid, "paseador"))
+                .setNegativeButton("Dueño", (dialog, which) -> asignarRolYRedirigir(uid, "dueño"))
                 .setCancelable(false)
                 .create()
                 .show();
+    }
+
+    private void asignarRolYRedirigir(String uid, String rol) {
+        db.collection("usuarios").document(uid)
+                .update("rol", rol)
+                .addOnSuccessListener(unused -> {
+                    Toast.makeText(MainActivity.this, "Rol asignado: " + (rol.equals("paseador") ? "Paseador" : "Dueño de mascota"), Toast.LENGTH_SHORT).show();
+                    redirigirPorRol(rol);
+                })
+                .addOnFailureListener(e -> Toast.makeText(MainActivity.this, "Error al guardar el rol: " + e.getMessage(), Toast.LENGTH_LONG).show());
     }
 
     private void redirigirPorRol(String rol) {
@@ -122,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(MainActivity.this, MainScreenDueno.class));
         } else {
             Toast.makeText(MainActivity.this, "Rol no reconocido: " + rol, Toast.LENGTH_LONG).show();
+            return;
         }
         finish();
     }

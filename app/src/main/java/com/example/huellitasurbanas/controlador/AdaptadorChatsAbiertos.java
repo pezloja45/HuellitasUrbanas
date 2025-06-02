@@ -18,56 +18,73 @@ import com.example.huellitasurbanas.modelo.Usuarios;
 
 import java.util.List;
 
+/**
+ * Adaptador para el RecyclerView que muestra la lista de chats abiertos.
+ * Cada item representa una conversación con un usuario.
+ */
 public class AdaptadorChatsAbiertos extends RecyclerView.Adapter<AdaptadorChatsAbiertos.ViewHolder> {
 
+    /**
+     * Interfaz para manejar eventos de clic y clic prolongado sobre los items del chat.
+     */
     public interface OnChatClickListener {
         void onChatClick(ChatItem chatItem);
         void onChatLongClick(ChatItem chatItem);
     }
 
-
     private List<ChatItem> listaChats;
-    private Context context;
-    private OnChatClickListener listener;
+    private Context contexto;
+    private OnChatClickListener oyente;
 
-    public AdaptadorChatsAbiertos(Context context, List<ChatItem> listaChats, OnChatClickListener listener) {
-        this.context = context;
+    /**
+     * Constructor del adaptador.
+     *
+     * @param contexto   Contexto de la aplicación o actividad.
+     * @param listaChats Lista de chats abiertos a mostrar.
+     * @param oyente     Oyente para los eventos de clic y clic largo.
+     */
+    public AdaptadorChatsAbiertos(Context contexto, List<ChatItem> listaChats, OnChatClickListener oyente) {
+        this.contexto = contexto;
         this.listaChats = listaChats;
-        this.listener = listener;
+        this.oyente = oyente;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_chat_abierto, parent, false);
-        return new ViewHolder(view);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup padre, int tipoVista) {
+        View vista = LayoutInflater.from(contexto).inflate(R.layout.item_chat_abierto, padre, false);
+        return new ViewHolder(vista);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        ChatItem chat = listaChats.get(position);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int posicion) {
+        ChatItem chat = listaChats.get(posicion);
         Usuarios usuario = chat.getUsuario();
 
-        holder.txtNombre.setText(usuario.getNombre());
-        holder.txtUltimoMensaje.setText(chat.getUltimoMensaje());
+        // Asignar nombre y último mensaje
+        holder.textoNombre.setText(usuario.getNombre());
+        holder.textoUltimoMensaje.setText(chat.getUltimoMensaje());
 
-        String photoUrl = usuario.getFotoPerfil();
-        if (photoUrl != null && !photoUrl.isEmpty()) {
-            Glide.with(context)
-                    .load(photoUrl)
+        // Cargar imagen de perfil usando Glide, o imagen por defecto si no hay
+        String urlFoto = usuario.getFotoPerfil();
+        if (urlFoto != null && !urlFoto.isEmpty()) {
+            Glide.with(contexto)
+                    .load(urlFoto)
                     .apply(RequestOptions.circleCropTransform())
                     .placeholder(R.drawable.baseline_person_150)
-                    .into(holder.imgFotoChat);
+                    .into(holder.imagenPerfil);
         } else {
-            holder.imgFotoChat.setImageResource(R.drawable.baseline_person_150);
+            holder.imagenPerfil.setImageResource(R.drawable.baseline_person_150);
         }
 
-        holder.itemView.setOnClickListener(v -> listener.onChatClick(chat));
+        // Manejar clic corto
+        holder.itemView.setOnClickListener(v -> oyente.onChatClick(chat));
+
+        // Manejar clic largo
         holder.itemView.setOnLongClickListener(v -> {
-            listener.onChatLongClick(chat);
+            oyente.onChatLongClick(chat);
             return true;
         });
-
     }
 
     @Override
@@ -75,15 +92,23 @@ public class AdaptadorChatsAbiertos extends RecyclerView.Adapter<AdaptadorChatsA
         return listaChats.size();
     }
 
+    /**
+     * ViewHolder interno que contiene las vistas para cada item de chat.
+     */
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView imgFotoChat;
-        TextView txtNombre, txtUltimoMensaje;
+        ImageView imagenPerfil;
+        TextView textoNombre, textoUltimoMensaje;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            imgFotoChat = itemView.findViewById(R.id.imgFotoChat);
-            txtNombre = itemView.findViewById(R.id.txtNombreChat);
-            txtUltimoMensaje = itemView.findViewById(R.id.txtUltimoMensaje);
+        /**
+         * Constructor del ViewHolder.
+         *
+         * @param vistaItem Vista inflada del layout item_chat_abierto.xml.
+         */
+        public ViewHolder(@NonNull View vistaItem) {
+            super(vistaItem);
+            imagenPerfil = vistaItem.findViewById(R.id.imgFotoChat);
+            textoNombre = vistaItem.findViewById(R.id.txtNombreChat);
+            textoUltimoMensaje = vistaItem.findViewById(R.id.txtUltimoMensaje);
         }
     }
 }

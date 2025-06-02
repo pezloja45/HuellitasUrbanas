@@ -16,71 +16,97 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.UUID;
 
+/**
+ * Actividad para registrar una nueva mascota en la base de datos.
+ * Captura información básica como nombre, raza, edad, tamaño y observaciones.
+ */
 public class CrearMascota extends AppCompatActivity {
 
-    private EditText str_nombreMascota, str_raza, str_eddad, str_observaciones;
-    private Spinner spinner_tamaño;
-    private Button btn_crearMascota;
+    private EditText campoNombre, campoRaza, campoEdad, campoObservaciones;
+    private Spinner spinnerTamaño;
+    private Button botonCrearMascota;
 
-    private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
+    private FirebaseAuth autenticacionFirebase;
+    private FirebaseFirestore baseDatos;
 
+    /**
+     * Método que se ejecuta al iniciar la actividad. Inicializa vistas y configuraciones.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crear_mascota);
 
-        mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
+        // Inicialización de Firebase
+        autenticacionFirebase = FirebaseAuth.getInstance();
+        baseDatos = FirebaseFirestore.getInstance();
 
-        str_nombreMascota = findViewById(R.id.str_nombreMascota);
-        str_raza = findViewById(R.id.str_raza);
-        str_eddad = findViewById(R.id.str_eddad);
-        spinner_tamaño = findViewById(R.id.spinner_tamaño);
-        str_observaciones = findViewById(R.id.str_observaciones);
-        btn_crearMascota = findViewById(R.id.btn_crearMascota);
+        // Enlazar componentes de la vista
+        campoNombre = findViewById(R.id.str_nombreMascota);
+        campoRaza = findViewById(R.id.str_raza);
+        campoEdad = findViewById(R.id.str_eddad);
+        campoObservaciones = findViewById(R.id.str_observaciones);
+        spinnerTamaño = findViewById(R.id.spinner_tamaño);
+        botonCrearMascota = findViewById(R.id.btn_crearMascota);
 
-        btn_crearMascota.setOnClickListener(v -> crearMascota());
-
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+        // Configurar spinner con los tamaños disponibles
+        ArrayAdapter<CharSequence> adaptadorTamaños = ArrayAdapter.createFromResource(
                 this,
                 R.array.tamaños_array,
                 android.R.layout.simple_spinner_item
         );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner_tamaño.setAdapter(adapter);
+        adaptadorTamaños.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTamaño.setAdapter(adaptadorTamaños);
+
+        // Listener del botón para registrar la mascota
+        botonCrearMascota.setOnClickListener(v -> registrarMascota());
     }
 
-    private void crearMascota() {
-        String nombre = str_nombreMascota.getText().toString().trim();
-        String raza = str_raza.getText().toString().trim();
-        String edadStr = str_eddad.getText().toString().trim();
-        String tamaño = spinner_tamaño.getSelectedItem().toString();
-        String observaciones = str_observaciones.getText().toString().trim();
+    /**
+     * Valida los campos ingresados y guarda la mascota en Firestore.
+     * Muestra mensajes en caso de error o éxito.
+     */
+    private void registrarMascota() {
+        String nombre = campoNombre.getText().toString().trim();
+        String raza = campoRaza.getText().toString().trim();
+        String edadTexto = campoEdad.getText().toString().trim();
+        String tamaño = spinnerTamaño.getSelectedItem().toString();
+        String observaciones = campoObservaciones.getText().toString().trim();
 
-        if (nombre.isEmpty() || raza.isEmpty() || edadStr.isEmpty() || tamaño.isEmpty()) {
+        // Validación de campos obligatorios
+        if (nombre.isEmpty() || raza.isEmpty() || edadTexto.isEmpty() || tamaño.isEmpty()) {
             Toast.makeText(this, "Completa todos los campos obligatorios", Toast.LENGTH_SHORT).show();
             return;
         }
 
         int edad;
         try {
-            edad = Integer.parseInt(edadStr);
+            edad = Integer.parseInt(edadTexto);
         } catch (NumberFormatException e) {
             Toast.makeText(this, "Edad no válida", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        // Crear nuevo objeto Mascota con identificador único
         String uidMascota = UUID.randomUUID().toString();
-        String uidDueno = mAuth.getCurrentUser().getUid();
+        String uidDueño = autenticacionFirebase.getCurrentUser().getUid();
 
-        Mascota nuevaMascota = new Mascota(uidMascota, uidDueno, nombre, edad, raza, tamaño, observaciones);
+        Mascota nuevaMascota = new Mascota(
+                uidMascota,
+                uidDueño,
+                nombre,
+                edad,
+                raza,
+                tamaño,
+                observaciones
+        );
 
-        db.collection("mascotas").document(uidMascota)
+        // Guardar en Firestore
+        baseDatos.collection("mascotas").document(uidMascota)
                 .set(nuevaMascota)
                 .addOnSuccessListener(unused -> {
                     Toast.makeText(this, "Mascota registrada con éxito", Toast.LENGTH_SHORT).show();
-                    finish();
+                    finish(); // Finaliza la actividad y vuelve a la anterior
                 })
                 .addOnFailureListener(e ->
                         Toast.makeText(this, "Error al guardar: " + e.getMessage(), Toast.LENGTH_LONG).show()

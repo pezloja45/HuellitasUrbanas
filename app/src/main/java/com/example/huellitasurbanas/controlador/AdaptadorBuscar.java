@@ -1,7 +1,5 @@
 package com.example.huellitasurbanas.controlador;
 
-import android.content.Intent;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,63 +12,89 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.huellitasurbanas.R;
 import com.example.huellitasurbanas.modelo.Usuarios;
-import com.example.huellitasurbanas.vista.fragment.Chat;
 
 import java.util.List;
 
+/**
+ * Adaptador para mostrar una lista de paseadores en un RecyclerView.
+ * Permite manejar eventos de clic en cada item.
+ */
 public class AdaptadorBuscar extends RecyclerView.Adapter<AdaptadorBuscar.ViewHolder> {
 
-    private List<Usuarios> listaUsuarios;
-    private OnUsuarioClickListener listener;
+    private List<Usuarios> listaPaseadores;
+    private OnPaseadorClickListener listener;
 
-    public AdaptadorBuscar(List<Usuarios> listaUsuarios, OnUsuarioClickListener listener) {
-        this.listaUsuarios = listaUsuarios;
-        this.listener = listener;
+    /**
+     * Interfaz para manejar eventos de clic sobre un paseador.
+     */
+    public interface OnPaseadorClickListener {
+        void alHacerClick(Usuarios paseador);
     }
 
-    public interface OnUsuarioClickListener {
-        void onUsuarioClick(Usuarios usuario);
+    /**
+     * Constructor del adaptador.
+     *
+     * @param listaPaseadores Lista de objetos Usuarios que representan paseadores.
+     * @param listener        Listener para manejar los clics en los items.
+     */
+    public AdaptadorBuscar(List<Usuarios> listaPaseadores, OnPaseadorClickListener listener) {
+        this.listaPaseadores = listaPaseadores;
+        this.listener = listener;
     }
 
     @NonNull
     @Override
-    public AdaptadorBuscar.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View vista = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardbuscar, parent, false);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup padre, int tipoVista) {
+        View vista = LayoutInflater.from(padre.getContext()).inflate(R.layout.cardbuscar, padre, false);
         return new ViewHolder(vista);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Usuarios usuario = listaUsuarios.get(position);
-        holder.str_nombrePasedorCard.setText(usuario.getNombre());
-        holder.str_ciudadPaseadorCard.setText(usuario.getCiudad());
+    public void onBindViewHolder(@NonNull ViewHolder holder, int posicion) {
+        Usuarios paseador = listaPaseadores.get(posicion);
+
+        // Se asignan los datos del paseador a las vistas del card
+        holder.textoNombre.setText(paseador.getNombre());
+        holder.textoCiudad.setText(paseador.getCiudad());
+
+        // Carga la imagen de perfil con Glide
         Glide.with(holder.itemView.getContext())
-                .load(usuario.getFotoPerfil())
-                .placeholder(R.drawable.baseline_person_150)
+                .load(paseador.getFotoPerfil())
+                .placeholder(R.drawable.baseline_person_150) // Imagen por defecto
                 .circleCrop()
-                .into(holder.img_perfilPaseadorCard);
+                .into(holder.imagenPerfil);
 
-
+        // Maneja el clic sobre el item completo
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
-                listener.onUsuarioClick(usuario);
+                listener.alHacerClick(paseador);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return listaUsuarios.size();
+        return listaPaseadores.size();
     }
 
+    /**
+     * Clase interna que representa el ViewHolder para cada item del RecyclerView.
+     */
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView str_nombrePasedorCard, str_ciudadPaseadorCard;
-        ImageView img_perfilPaseadorCard;
+
+        TextView textoNombre, textoCiudad;
+        ImageView imagenPerfil;
+
+        /**
+         * Constructor que inicializa las vistas del card.
+         *
+         * @param itemView Vista individual del item.
+         */
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            str_nombrePasedorCard = itemView.findViewById(R.id.str_nombrePasedorCard);
-            str_ciudadPaseadorCard = itemView.findViewById(R.id.str_ciudadPaseadorCard);
-            img_perfilPaseadorCard = itemView.findViewById(R.id.img_perfilPaseadorCard);
+            textoNombre = itemView.findViewById(R.id.str_nombrePasedorCard);
+            textoCiudad = itemView.findViewById(R.id.str_ciudadPaseadorCard);
+            imagenPerfil = itemView.findViewById(R.id.img_perfilPaseadorCard);
         }
     }
 }

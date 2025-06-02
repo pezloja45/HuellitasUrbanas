@@ -63,10 +63,16 @@ public class Mascotas extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        // Recargar mascotas en caso de que se haya agregado o modificado alguna
         cargarMascotas();
     }
 
     private void cargarMascotas() {
+        if (mAuth.getCurrentUser() == null) {
+            Toast.makeText(getContext(), "Usuario no autenticado", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String uidDueno = mAuth.getCurrentUser().getUid();
 
         db.collection("mascotas")
@@ -79,6 +85,10 @@ public class Mascotas extends Fragment {
                         listaMascotas.add(mascota);
                     }
                     adaptador.notifyDataSetChanged();
+
+                    if (listaMascotas.isEmpty()) {
+                        Toast.makeText(getContext(), "No tienes mascotas registradas.", Toast.LENGTH_SHORT).show();
+                    }
                 })
                 .addOnFailureListener(e ->
                         Toast.makeText(getContext(), "Error al cargar mascotas: " + e.getMessage(), Toast.LENGTH_SHORT).show());
