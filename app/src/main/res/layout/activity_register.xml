@@ -22,14 +22,14 @@
         android:id="@+id/logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sign In"
+        android:layout_marginTop="8dp"
+        android:text="@string/btn_signin"
         android:textColor="@color/colorWhite"
         android:textSize="36sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/imageView2"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imageView2" />
 
     <!-- Nombre -->
     <com.google.android.material.textfield.TextInputLayout
@@ -40,7 +40,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="32dp"
-        android:hint="Nombre"
+        android:hint="@string/str_userName"
         app:boxBackgroundColor="@android:color/transparent"
         app:boxStrokeColor="@color/colorWhite"
         app:boxStrokeWidthFocused="2dp"
@@ -100,7 +100,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="32dp"
-        android:hint="Email"
+        android:hint="@string/plch_email"
         app:boxBackgroundColor="@android:color/transparent"
         app:boxStrokeColor="@color/colorWhite"
         app:hintTextColor="@color/colorWhite"
@@ -125,7 +125,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="32dp"
-        android:hint="Contraseña"
+        android:hint="@string/plch_password"
         app:boxBackgroundColor="@android:color/transparent"
         app:boxStrokeColor="@color/colorWhite"
         app:hintTextColor="@color/colorWhite"
@@ -152,7 +152,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="32dp"
-        android:hint="Confirmar Contraseña"
+        android:hint="@string/plch_passwordConf"
         app:boxBackgroundColor="@android:color/transparent"
         app:boxStrokeColor="@color/colorWhite"
         app:hintTextColor="@color/colorWhite"
@@ -177,10 +177,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:backgroundTint="@color/mainOscuro"
-        android:text="Registrarse"
-        app:layout_constraintTop_toBottomOf="@id/layoutConfirmPass"
+        android:text="@string/btn_signin"
+        app:layout_constraintEnd_toEndOf="@id/layoutConfirmPass"
         app:layout_constraintStart_toStartOf="@id/layoutConfirmPass"
-        app:layout_constraintEnd_toEndOf="@id/layoutConfirmPass" />
+        app:layout_constraintTop_toBottomOf="@id/layoutConfirmPass" />
 
     <!-- Ya tiene cuenta -->
     <TextView
@@ -188,10 +188,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="¿Ya tienes una cuenta?"
+        android:text="@string/str_accAlr"
         android:textColor="@color/colorWhite"
-        app:layout_constraintTop_toBottomOf="@id/btnRegister"
+        app:layout_constraintEnd_toEndOf="@id/btnRegister"
         app:layout_constraintStart_toStartOf="@id/btnRegister"
-        app:layout_constraintEnd_toEndOf="@id/btnRegister" />
+        app:layout_constraintTop_toBottomOf="@id/btnRegister" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

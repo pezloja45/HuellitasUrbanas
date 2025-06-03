@@ -1,7 +1,6 @@
 <resources>
-    <string name="app_name">HuellitasUrbanas</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_name" translatable="false">HuellitasUrbanas</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string-array name="tamaños_array">
         <item>Pequeño</item>
         <item>Mediano</item>
@@ -35,4 +34,25 @@
     <item>Tarragona</item>
     <item>Santander</item>
     </string-array>
+
+    <string name="str_userName">User name</string>
+    <string name="plch_nombre">Name</string>
+    <string name="plch_email">Email</string>
+    <string name="plch_password">Password</string>
+    <string name="plch_passwordConf">Confirm Password</string>
+    <string name="str_save">Save Changes</string>
+    <string name="str_userPets">User Pets</string>
+    <string name="btn_close">Close</string>
+    <string name="btn_signin">Sign In</string>
+    <string name="btn_create">Create Pet</string>
+    <string name="btn_update">Update Pet</string>
+    <string name="btn_enter">Enter</string>
+    <string name="str_accAlr">Already have an account?</string>
+    <string name="str_breed">Breed</string>
+    <string name="str_age">Age</string>
+    <string name="str_size">Size</string>
+    <string name="str_observations">Observations</string>
+    <string name="str_forgot">Forgot Password?</string>
+    <string name="str_register">Register</string>
+    <string name="str_notAcc">"You don't have an account?"</string>
 </resources>

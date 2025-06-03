@@ -28,11 +28,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:hint="Nombre"
+            android:hint="@string/plch_nombre"
+            app:boxBackgroundColor="@android:color/transparent"
             app:boxStrokeColor="@color/colorWhite"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="2dp"
-            app:boxBackgroundColor="@android:color/transparent"
             app:hintTextColor="@color/colorWhite">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -80,11 +80,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="Correo electrónico"
+            android:hint="@string/plch_email"
+            app:boxBackgroundColor="@android:color/transparent"
             app:boxStrokeColor="@color/colorWhite"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="2dp"
-            app:boxBackgroundColor="@android:color/transparent"
             app:hintTextColor="@color/colorWhite">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -103,6 +103,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:backgroundTint="@color/mainOscuro"
-            android:text="Guardar cambios" />
+            android:text="@string/str_save" />
     </LinearLayout>
 </ScrollView>
