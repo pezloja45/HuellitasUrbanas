@@ -34,7 +34,6 @@
                 android:id="@+id/txtNombreChat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nombre Paseador"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -42,7 +41,6 @@
                 android:id="@+id/txtUltimoMensaje"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Último mensaje aquí..."
                 android:textColor="#666"
                 android:textSize="14sp" />
         </LinearLayout>

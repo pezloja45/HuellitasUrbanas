@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:background="@color/mainOscuro"
         android:padding="12dp"
-        android:text="Mascotas del Usuario"
+        android:text="@string/str_userPets"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
         android:textStyle="bold" />
@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/mainOscuro"
         android:padding="12dp"
-        android:text="Cerrar"
+        android:text="@string/btn_close"
         android:textAllCaps="false"
         android:textColor="#FFFFFF" />
 

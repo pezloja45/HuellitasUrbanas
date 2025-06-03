@@ -29,7 +29,7 @@
         android:background="@drawable/input_bg"
         android:drawablePadding="10dp"
         android:ems="10"
-        android:hint="Password"
+        android:hint="@string/plch_password"
         android:inputType="textPassword"
         android:paddingLeft="20dp"
         android:paddingTop="10dp"
@@ -53,7 +53,7 @@
         android:background="@drawable/input_bg"
         android:drawablePadding="10dp"
         android:ems="10"
-        android:hint="Email"
+        android:hint="@string/plch_email"
         android:inputType="textEmailAddress"
         android:paddingLeft="20dp"
         android:paddingTop="10dp"
@@ -72,7 +72,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Olvido su Contraseña?"
+        android:text="@string/str_forgot"
         android:textColor="@color/colorWhite"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -85,7 +85,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="60dp"
         android:backgroundTint="@color/mainOscuro"
-        android:text="Entrar"
+        android:text="@string/btn_enter"
         app:layout_constraintStart_toStartOf="@+id/str_pass"
         app:layout_constraintTop_toBottomOf="@+id/str_pass" />
 
@@ -105,7 +105,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No tiene una cuenta?"
+            android:text="@string/str_notAcc"
             android:textColor="@color/colorWhite" />
 
         <TextView
@@ -113,7 +113,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:text="Registrese"
+            android:text="@string/str_register"
             android:textColor="@color/colorWhite"
             android:textStyle="bold" />
 

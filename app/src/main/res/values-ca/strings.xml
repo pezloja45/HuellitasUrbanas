@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HuellitasUrbanas</string>
+    <string name="str_userName">Nom d\'usuari</string>
+    <string name="plch_nombre">Nom</string>
+    <string name="plch_email">Correu electrònic</string>
+    <string name="plch_password">Contrasenya</string>
+    <string name="plch_passwordConf">Confirmar contrasenya</string>
+    <string name="str_save">Desar canvis</string>
+    <string name="str_userPets">Mascotes</string>
+    <string name="btn_close">Tancar</string>
+    <string name="btn_signin">Registrar-se</string>
+    <string name="btn_create">"Crear mascota "</string>
+    <string name="btn_update">Actualitzar mascota</string>
+    <string name="btn_enter">Entrar</string>
+    <string name="str_accAlr">Ja tens un compte?</string>
+    <string name="str_breed">Raça</string>
+    <string name="str_age">Edat</string>
+    <string name="str_size">Grandària</string>
+    <string name="str_observations">Observacions</string>
+    <string name="str_forgot">He oblidat la contrasenya?</string>
+    <string name="str_register">Registrar-se</string>
+    <string name="str_notAcc">No teniu un compte?</string>
+</resources>
